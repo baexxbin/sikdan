@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>오늘의 식단 기록</title>
+    <link rel="stylesheet" href="/css/meal-record.css">
+    <script src="/js/meal-record.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1><span th:text="${day}"></span> 식단</h1>
+
+        <form method="get" action="/meal-record" class="date-form">
+            <input type="date" name="date" th:value="${day}">
+            <button type="submit">조회</button>
+        </form>
+
+        <table>
+            <thead>
+            <tr>
+                <th>식사 시간</th>
+                <th>음식 이름</th>
+                <th>양</th>
+                <th>영양소</th>
+            </tr>
+            </thead>
+
+            <tbody th:if="${mealRecords.isEmpty()}">
+            <tr>
+                <td colspan="4">아직 등록된 식단이 없습니다.</td>
+            </tr>
+            </tbody>
+
+            <tbody th:each="record : ${mealRecords}" th:unless="${mealRecords.isEmpty()}">
+            <tr>
+                <td th:text="${record.mealTime}" th:rowspan="${#lists.size(record.foodItems)}"></td>
+                <td th:text="${record.foodItems[0].foodName}"></td>
+                <td th:text="${record.foodItems[0].amount}"></td>
+                <td th:text="${record.foodItems[0].nutrientType}"></td>
+            </tr>
+
+            <tr th:each="foodItem, iterStat : ${record.foodItems}" th:if="${iterStat.index > 0}">
+                <td th:text="${foodItem.foodName}"></td>
+                <td th:text="${foodItem.amount}"></td>
+                <td th:text="${foodItem.nutrientType}"></td>
+            </tr>
+            </tbody>
+
+        </table>
+
+
+        <h2>음식 추가</h2>
+
+        <form th:action="@{/meal-record}" method="post" class="meal-form">
+            <select name="mealTime">
+                <option value="BREAKFAST">아침</option>
+                <option value="LUNCH">점심</option>
+                <option value="DINNER">저녁</option>
+                <option value="SNACK">간식</option>
+                <option value="LATE_NIGHT">야식</option>
+            </select>
+
+            <input type="text" name="foodName" placeholder="음식 이름">
+            <input type="text" name="amount" placeholder="양">
+
+            <div class="form-group nutrient-group">
+                <input type="text" name="nutrientType" id="nutrientTypeInput" placeholder="영양소 입력 또는 찾기">
+                <button type="button" onclick="openNutrientSearchModal()">영양소 찾기</button>
+            </div>
+            <button type="submit">추가</button>
+        </form>
+    </div>
+
+    <!-- 영양소 검색 모달 -->
+    <div id="nutrientSearchModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeNutrientSearchModal()">&times;</span>
+            <h2>영양소 검색</h2>
+            <input type="text" id="nutrientSearchKeyword" placeholder="영양소 검색어 입력">
+            <button type="button" onclick="searchNutrient()">검색</button>
+            <div id="nutrientSearchResults"></div>
+        </div>
+    </div>
+
+</body>
+</html>
+

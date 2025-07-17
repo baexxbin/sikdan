@@ -2,11 +2,15 @@ package org.example.sikdan.domain.meal.application.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.sikdan.domain.meal.dto.request.MealRecordCreateRequestDto;
+import org.example.sikdan.domain.meal.dto.response.MealRecordResponseDto;
 import org.example.sikdan.domain.meal.persistence.MealMapper;
 import org.example.sikdan.domain.meal.application.MealService;
 import org.example.sikdan.util.InputSanitizer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +34,12 @@ public class MealServiceImpl implements MealService {
         }
 
         return mealRecordId;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MealRecordResponseDto> getMealRecordsByMemberIdAndDate(Long memberId, LocalDate date) {
+        return mealMapper.selectMealRecordsByMemberIdAndDate(memberId, date);
     }
 
     // MealRecordCreateRequestDto 전처리
