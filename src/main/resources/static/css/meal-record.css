@@ -48,15 +48,6 @@ tbody:empty::before {
     color: gray;
 }
 
-form.meal-form {
-    background-color: #C0C78C;
-    padding: 20px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
 
 input, select {
     padding: 10px;
@@ -77,6 +68,56 @@ button:hover {
     background-color: #A6B37D;
 }
 
+/* 음식 등록 폼 */
+
+form.meal-form {
+    background-color: #C0C78C;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.food-item {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.food-item input {
+    flex: 1 1 120px;
+}
+
+.food-item button {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+}
+
+button {
+    padding: 12px 20px;
+    background-color: #B99470;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+button:hover {
+    background-color: #A6B37D;
+}
+
+.meal-form .control-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.meal-form select {
+    width: 150px;
+}
 
 .modal {
     display: none;

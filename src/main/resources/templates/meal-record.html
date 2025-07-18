@@ -10,9 +10,10 @@
     <div class="container">
         <h1><span th:text="${day}"></span> 식단</h1>
 
+        <!--   특정 날짜 식단 불러오기     -->
         <form method="get" action="/meal-record" class="date-form">
+            <button type="submit">선택</button>
             <input type="date" name="date" th:value="${day}">
-            <button type="submit">조회</button>
         </form>
 
         <table>
@@ -49,9 +50,12 @@
         </table>
 
 
+        <!--   음식 추가  폼   -->
         <h2>음식 추가</h2>
 
-        <form th:action="@{/meal-record}" method="post" class="meal-form">
+        <form id="mealForm" class="meal-form">
+            <input type="hidden" id="mealDate" name="mealDate" th:value="${day}">
+
             <select name="mealTime">
                 <option value="BREAKFAST">아침</option>
                 <option value="LUNCH">점심</option>
@@ -60,16 +64,21 @@
                 <option value="LATE_NIGHT">야식</option>
             </select>
 
-            <input type="text" name="foodName" placeholder="음식 이름">
-            <input type="text" name="amount" placeholder="양">
-
-            <div class="form-group nutrient-group">
-                <input type="text" name="nutrientType" id="nutrientTypeInput" placeholder="영양소 입력 또는 찾기">
-                <button type="button" onclick="openNutrientSearchModal()">영양소 찾기</button>
+            <div id="foodItemsContainer">
+                <div class="food-item">
+                    <input type="text" name="foodName" placeholder="음식 이름">
+                    <input type="text" name="amount" placeholder="양">
+                    <div class="form-group nutrient-group">
+                        <input type="text" name="nutrientType" placeholder="영양소 입력 또는 찾기">
+                        <button type="button" onclick="openNutrientSearchModal(this)">영양소 찾기</button>
+                    </div>
+                    <button type="button" onclick="removeFoodItem(this)">삭제</button>
+                </div>
             </div>
-            <button type="submit">추가</button>
+
+            <button type="button" onclick="addFoodItem()">음식 추가</button>
+            <button type="button" onclick="submitMeal()">등록</button>
         </form>
-    </div>
 
     <!-- 영양소 검색 모달 -->
     <div id="nutrientSearchModal" class="modal" style="display:none;">
@@ -81,7 +90,7 @@
             <div id="nutrientSearchResults"></div>
         </div>
     </div>
-
+    </div>
 </body>
 </html>
 

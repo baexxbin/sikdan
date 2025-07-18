@@ -1,4 +1,4 @@
-package org.example.sikdan.domain.meal.presentation;
+package org.example.sikdan.domain.meal.presentation.api;
 
 import lombok.RequiredArgsConstructor;
 import org.example.sikdan.domain.meal.application.MealService;
