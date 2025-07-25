@@ -22,6 +22,9 @@
         <package name="org.example.sikdan.domain.meal.dto"/>
         <package name="org.example.sikdan.domain.food.dto"/>
         <package name="org.example.sikdan.domain.member.dto"/>
+        <package name="org.example.sikdan.domain.meal.model.vo"/>
+        <package name="org.example.sikdan.domain.food.model.vo"/>
+        <package name="org.example.sikdan.domain.member.model.vo"/>
     </typeAliases>
 
 </configuration>
