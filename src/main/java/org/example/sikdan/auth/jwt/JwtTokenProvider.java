@@ -7,19 +7,27 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.example.sikdan.auth.application.impl.CustomUserDetails;
 import org.example.sikdan.config.JwtProperties;
+import org.example.sikdan.domain.member.model.vo.Member;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
+@Slf4j
+@Getter
 public class JwtTokenProvider {
 
     private final JwtProperties jwtProperties;
@@ -41,6 +49,7 @@ public class JwtTokenProvider {
         */
         byte[] keyBytes = Base64.getDecoder().decode(jwtProperties.getSecret());
         this.key = Keys.hmacShaKeyFor(keyBytes);
+//        this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
     }
 
     // 토큰 생성
@@ -48,9 +57,14 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(email);        // payload의 sub(토큰 주체)에 들어갈 값, (표준 Claim)
         claims.put("memberId", memberId);                        // (사용자 정의 Claim)
         claims.put("roles", roles);
+        claims.put("email", email);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + jwtProperties.getExpiration());
+
+        log.info("유효시간 설정(ms): {}", jwtProperties.getExpiration());
+        log.info("유효시간 validity: {}", validity);
+
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -83,16 +97,31 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);     // 여기서 Exception 발생 안 하면 유효
             return true;
         } catch (JwtException | IllegalArgumentException e) {
+            log.warn("JWT 검증 실패: {}", e.getMessage());
             return false;
         }
     }
 
     // 토큰에서 인증 정보 추출
     public Authentication getAuthentication(String token) {
-        String username = getUsername(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        Claims claims = getClaims(token);
 
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        Long memberId = ((Number) claims.get("memberId")).longValue();
+        String email = claims.get("email", String.class);
+        List<String> roles = claims.get("roles", List.class);
+
+        List<GrantedAuthority> authorities = roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
+        Member member = Member.builder()
+                .memberId(memberId)
+                .email(email)
+                .build();
+
+        CustomUserDetails customUserDetails = new CustomUserDetails(member, authorities);
+
+        return new UsernamePasswordAuthenticationToken(customUserDetails, null, authorities);
     }
 
     // 토큰에서 사용자명 추출
