@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface  MealMapper {
 
-    void insertMealRecord(MealRecordCreateRequestDto request);
+    void insertMealRecord(@Param("memberId") Long memberId, @Param("request") MealRecordCreateRequestDto request);
 
     void insertFoodItem(@Param("mealRecordId") Long mealRecordId, @Param("foodItems")List<FoodItemDto> foodItems);
 

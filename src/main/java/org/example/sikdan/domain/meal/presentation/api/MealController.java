@@ -1,9 +1,13 @@
 package org.example.sikdan.domain.meal.presentation.api;
 
 import lombok.RequiredArgsConstructor;
+import org.example.sikdan.auth.application.impl.CustomUserDetails;
 import org.example.sikdan.domain.meal.application.MealService;
 import org.example.sikdan.domain.meal.dto.request.MealRecordCreateRequestDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,16 +20,14 @@ public class MealController {
 
     private final MealService mealService;
 
-    @PostMapping("record")
-    public ResponseEntity<Long> createMeal(@RequestBody MealRecordCreateRequestDto request) {
-        /* TODO: 인증 구현 전까진 memberId를 request에서 직접 받음
-            구현 후엔 Authentication 객체에서 꺼내쓰기
+    @PostMapping("/record")
+    public ResponseEntity<Long> createMeal(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestBody MealRecordCreateRequestDto request) {
 
-            Long memberId = getAuthenticatedMemberId(); // JWT나 세션에서 추출
-            requestDto.setMemberId(memberId); // 여기에 주입
-        * */
+        Long memberId = user.getMemberId();
 
-        Long mealRecordId = mealService.createMealRecord(request);
+        Long mealRecordId = mealService.createMealRecord(memberId, request);
         return ResponseEntity.ok(mealRecordId);
     }
 }

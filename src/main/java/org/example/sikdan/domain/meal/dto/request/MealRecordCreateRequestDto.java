@@ -11,10 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class MealRecordCreateRequestDto {
-
-    // 로그인 구현 전 임시 memberId
-    private Long memberId;
-
     private Long mealRecordId;  // insert 후 자동증가되는 시퀀스 값 받기 위해 필요
     private LocalDate mealDate;
     private MealTime mealTime;

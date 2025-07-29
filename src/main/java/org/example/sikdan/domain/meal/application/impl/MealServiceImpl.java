@@ -20,12 +20,12 @@ public class MealServiceImpl implements MealService {
 
     @Override
     @Transactional
-    public Long createMealRecord(MealRecordCreateRequestDto requestDto) {
+    public Long createMealRecord(Long memberId, MealRecordCreateRequestDto requestDto) {
         // 0. 입력값 전처리 null
         sanitizeRequestDto(requestDto);
 
         // 1. meal_record 테이블에 insert (mealRecordId 자동으로 채움)
-        mealMapper.insertMealRecord(requestDto);
+        mealMapper.insertMealRecord(memberId, requestDto);
         Long mealRecordId = requestDto.getMealRecordId();
 
         // 2. food_item 테이블에 연관된 음식 insert

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface MealService {
-    Long createMealRecord(MealRecordCreateRequestDto request);
+    Long createMealRecord(Long memberId, MealRecordCreateRequestDto request);
 
     List<MealRecordResponseDto> getMealRecordsByMemberIdAndDate(Long memberId, LocalDate date);
 }

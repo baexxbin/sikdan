@@ -6,7 +6,7 @@
 <mapper namespace="org.example.sikdan.domain.meal.persistence.MealMapper">
 
     <!-- 식사 기록 등록  -->
-    <insert id="insertMealRecord" parameterType="MealRecordCreateRequestDto" useGeneratedKeys="true" keyProperty="mealRecordId">
+    <insert id="insertMealRecord" parameterType="map" useGeneratedKeys="true" keyProperty="request.mealRecordId">
         INSERT INTO meal_record (
             member_id,
             meal_date,
@@ -14,11 +14,11 @@
             memo,
             meal_photo_url
         ) VALUES (
-            #{memberId},
-            #{mealDate},
-            #{mealTime},
-            #{memo},
-            #{mealPhotoUrl}
+             #{memberId},
+             #{request.mealDate},
+             #{request.mealTime},
+             #{request.memo},
+             #{request.mealPhotoUrl}
         )
     </insert>
 
