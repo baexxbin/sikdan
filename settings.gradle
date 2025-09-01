@@ -1,1 +1,8 @@
 rootProject.name = 'sikdan'
+
+include 'common'
+include 'member-service'
+include 'auth-service'
+include 'diet-service'
+
+include 'common'

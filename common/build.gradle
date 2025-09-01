@@ -1,0 +1,43 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'org.example'
+version = '0.0.1-SNAPSHOT'
+description = 'Common utilities for all services'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    // Spring Bean / Configuration 사용 가능
+    implementation 'org.springframework:spring-context:6.2.9'
+
+    // Security (PasswordEncoder 등)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // Jasypt
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+    // Test
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    // Jasypt 테스트 시 암호 키 주입
+    systemProperty "jasypt.encryptor.password", System.getProperty("jasypt.encryptor.password")
+}
