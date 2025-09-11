@@ -1,4 +1,4 @@
-package org.example.sikdan.domain.member.model.vo;
+package org.example.memberservice.model.vo;
 
 import lombok.*;
 

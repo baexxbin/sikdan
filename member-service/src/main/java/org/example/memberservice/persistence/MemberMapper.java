@@ -1,7 +1,7 @@
-package org.example.sikdan.domain.member.persistence;
+package org.example.memberservice.persistence;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.example.sikdan.domain.member.model.vo.Member;
+import org.example.memberservice.model.vo.Member;
 
 import java.util.List;
 

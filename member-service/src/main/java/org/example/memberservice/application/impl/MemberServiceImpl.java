@@ -1,9 +1,9 @@
-package org.example.sikdan.domain.member.application.impl;
+package org.example.memberservice.application.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.sikdan.domain.member.application.MemberService;
-import org.example.sikdan.domain.member.model.vo.Member;
-import org.example.sikdan.domain.member.persistence.MemberMapper;
+import org.example.memberservice.application.MemberService;
+import org.example.memberservice.model.vo.Member;
+import org.example.memberservice.persistence.MemberMapper;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,6 +1,6 @@
-package org.example.sikdan.domain.member.application;
+package org.example.memberservice.application;
 
-import org.example.sikdan.domain.member.model.vo.Member;
+import org.example.memberservice.model.vo.Member;
 
 public interface MemberService {
 

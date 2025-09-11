@@ -1,8 +1,8 @@
 rootProject.name = 'sikdan'
 
-include 'common'
-include 'member-service'
-include 'auth-service'
-include 'diet-service'
 
-include 'common'
+// TODO: 향후 Nexus로 배포
+include("common")
+include("auth-service")
+include("member-service")
+include("service-discovery")
