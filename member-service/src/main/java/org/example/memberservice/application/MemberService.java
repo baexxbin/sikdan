@@ -1,12 +1,13 @@
 package org.example.memberservice.application;
 
-import org.example.memberservice.model.vo.Member;
+import org.example.common.dto.response.MemberResponse;
+import org.example.memberservice.dto.request.MemberCreateRequest;
 
 public interface MemberService {
 
-    Member findByEmail(String email);
+    MemberResponse findByEmail(String email);
 
-    Member findById(String id);
+    MemberResponse findById(Long id);
 
-    void registerMember(Member member);
+    MemberResponse registerMember(MemberCreateRequest member);
 }
