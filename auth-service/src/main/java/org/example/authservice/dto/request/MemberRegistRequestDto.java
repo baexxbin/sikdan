@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// 회원가입 요청 DTO (프론트 -> auth)
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

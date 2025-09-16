@@ -1,6 +1,7 @@
 package org.example.memberservice.persistence;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.example.memberservice.model.vo.Member;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface MemberMapper {
 
     void insertMember(Member member);
 
-    Member findByMemberId(Long memberId);
+    Member findByMemberId(@Param("member_id") Long memberId);
 
     Member findByEmail(String email);
 

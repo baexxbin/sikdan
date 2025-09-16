@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.example.authservice.config.JwtProperties;
 import org.example.common.dto.request.MemberInfoDto;
-import org.example.authservice.application.impl.CustomUserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,13 +23,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// 토큰 생성 및 검증
+
 @Component
 @Slf4j
 @Getter
 public class JwtTokenProvider {
 
     private final JwtProperties jwtProperties;
-//    private final UserDetailsService userDetailsService;
     private Key key;
 
     public JwtTokenProvider(
@@ -52,7 +52,7 @@ public class JwtTokenProvider {
     // 토큰 생성
     public String generateToken(MemberInfoDto memberInfo) {      // 이때 roles는 security에서 인가 용도로 사용되는 권한 정보 (ROLE_USER, ROLE_ADMIN ..)
         Claims claims = Jwts.claims().setSubject(memberInfo.getEmail());        // payload의 sub(토큰 주체)에 들어갈 값, (표준 Claim)
-        claims.put("memberId", memberInfo.getEmail());                        // (사용자 정의 Claim)
+        claims.put("memberId", memberInfo.getMemberId());                        // (사용자 정의 Claim)
         claims.put("roles", memberInfo.getRoles());
         claims.put("email", memberInfo.getEmail());
 

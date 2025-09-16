@@ -28,7 +28,7 @@ public class MemberServiceImpl implements MemberService {
                 member.getMemberName(),
                 member.getEmail(),
                 member.getPassword(), // auth에서 password 검증해야 하므로 포함
-                List.of("ROLE_USER")
+                List.of(member.getRole())
         );
     }
 
@@ -37,7 +37,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberMapper.findByMemberId(id);
 
         if (member == null) {
-            throw new IllegalArgumentException("이메일 없음");
+            throw new IllegalArgumentException("ID 없음");
         }
 
         return new MemberResponse(
@@ -45,18 +45,14 @@ public class MemberServiceImpl implements MemberService {
                 member.getMemberName(),
                 member.getEmail(),
                 member.getPassword(), // auth에서 password 검증해야 하므로 포함
-                List.of("ROLE_USER")
+                List.of(member.getRole())
         );
     }
 
     @Override
     public MemberResponse registerMember(MemberCreateRequest request) {
-        Member member = Member.builder()
-                .memberName(request.memberName())
-                .email(request.email())
-                .password(request.password())   // 이미 auth-service에서 해싱되어 들어옴
-                .nickname(request.nickname())
-                .build();
+
+        Member member = request.toEntity();
 
         memberMapper.insertMember(member);
 
@@ -64,8 +60,8 @@ public class MemberServiceImpl implements MemberService {
                 member.getMemberId(),
                 member.getMemberName(),
                 member.getEmail(),
-                member.getPassword(),
-                List.of("ROLE_USER")
+                member.getPassword(), // auth에서 password 검증해야 하므로 포함
+                List.of(member.getRole())
         );
     }
 }

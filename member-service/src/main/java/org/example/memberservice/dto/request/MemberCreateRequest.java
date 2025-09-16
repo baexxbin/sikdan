@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.memberservice.model.vo.Member;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @NoArgsConstructor
@@ -15,12 +14,13 @@ public class MemberCreateRequest {
     private String password;
     private String nickname;
 
-    public Member toEntity(PasswordEncoder passwordEncoder) {
+    public Member toEntity() {
         return Member.builder()
                 .memberName(memberName)
                 .email(email)
-                .password(passwordEncoder.encode(password))
+                .password(password)     // 이미 auth-service에서 해싱되어 들어옴
                 .nickname(nickname)
+                .role("ROLE_USER")
                 .build();
     }
 }

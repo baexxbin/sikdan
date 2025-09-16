@@ -1,4 +1,4 @@
-package org.example.authservice.application.impl;
+package org.example.authservice.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 //  Member객체를 Spring Security에 맞게 변환
+// 토큰 검증 시 SecurityContext에 유저 저장
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private final Long memberId;

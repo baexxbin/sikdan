@@ -11,9 +11,9 @@ public interface MemberClient {
     @PostMapping("/register")
     void registerMember(@RequestBody MemberCreateRequest request);
 
-    @GetMapping("/api/members/email/{email}")
+    @GetMapping("/email/{email}")
     MemberResponse findByEmail(@PathVariable("email") String email);
 
-    @GetMapping("/api/members/{id}")
+    @GetMapping("/{id}")
     MemberResponse findById(@PathVariable("id") Long id);
 }

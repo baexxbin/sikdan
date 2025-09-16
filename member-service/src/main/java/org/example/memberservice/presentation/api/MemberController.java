@@ -14,7 +14,7 @@ public class MemberController {
     private final MemberService memberService;
 
     // 회원 생성 (auth-service에서 호출)
-    @PostMapping
+    @PostMapping("/register")
     public MemberResponse createMember(@RequestBody MemberCreateRequest requestDto) {
         return memberService.registerMember(requestDto);
     }

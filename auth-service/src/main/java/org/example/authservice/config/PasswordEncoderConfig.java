@@ -1,4 +1,4 @@
-package org.example.memberservice.config;
+package org.example.authservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

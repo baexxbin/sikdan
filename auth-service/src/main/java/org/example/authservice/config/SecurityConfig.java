@@ -1,7 +1,6 @@
 package org.example.authservice.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.authservice.application.CustomUserDetailsService;
 import org.example.authservice.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 
@@ -42,7 +40,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )   // jwt 세션 없이 동작
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // 로그인, 회원가입은 인증 없이 접근 가능
+                        .requestMatchers("/api/auth/**").permitAll() // 로그인, 회원가입은 인증 없이 접근 가능
                         .anyRequest().authenticated()            // 나머지 요청은 인증 필요
                 );
 
