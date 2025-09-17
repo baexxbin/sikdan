@@ -5,4 +5,6 @@ rootProject.name = 'sikdan'
 include("common")
 include("auth-service")
 include("member-service")
+include("meal-service")
 include("service-discovery")
+include ("common-security")
