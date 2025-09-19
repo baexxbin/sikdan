@@ -16,4 +16,6 @@ public interface MemberMapper {
     Member findByEmail(String email);
 
     List<Member> findAllMembers();
+
+    boolean isExistsMemberId(@Param("member_id") Long memberId);
 }

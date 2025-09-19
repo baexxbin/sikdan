@@ -64,4 +64,10 @@ public class MemberServiceImpl implements MemberService {
                 List.of(member.getRole())
         );
     }
+
+    @Override
+    public boolean existsById(Long memberId) {
+        return memberMapper.isExistsMemberId(memberId);
+    }
+
 }

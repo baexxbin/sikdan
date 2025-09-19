@@ -20,8 +20,10 @@
 
     <!-- DTO 클래스 alias 설정 -->
     <typeAliases>
-        <package name="org.example.memberservice.dto"/>
-        <package name="org.example.memberservice.model.vo"/>
+        <package name="org.example.mealservice.domain.meal.dto"/>
+        <package name="org.example.mealservice.domain.food.dto"/>
+        <package name="org.example.mealservice.domain.meal.model.vo"/>
+        <package name="org.example.mealservice.domain.food.model.vo"/>
     </typeAliases>
 
 </configuration>

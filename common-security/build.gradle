@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'org.example'
@@ -11,23 +10,29 @@ repositories {
 }
 
 dependencies {
-    // Spring Security
-    api 'org.springframework.boot:spring-boot-starter-security'
+    // java-library 모듈이므로 버전명시 잘해주기
+    // compileOnly → 실제 실행은 각 서비스가 가져가도록 위임
 
     // Lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
 
-    // JWT
+    compileOnly 'org.slf4j:slf4j-api:2.0.16'
+
+    // JWT (API는 외부 모듈이 써야 하므로 api, 내부 구현은 runtimeOnly)
     api 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // Test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    // Servlet API
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    // Spring Web
+    compileOnly 'org.springframework:spring-web:6.1.4'
+
+    // Spring Security Core
+    compileOnly 'org.springframework.security:spring-security-core:6.3.4'
+    compileOnly 'org.springframework.security:spring-security-web:6.3.4'
 }
 
 test {

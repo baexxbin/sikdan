@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.example.mealservice.domain.meal.persistence.MealMapper">
+
+    <!-- 식사 기록 등록  -->
+    <insert id="insertMealRecord" parameterType="map" useGeneratedKeys="true" keyProperty="request.mealRecordId">
+        INSERT INTO meal_record (
+            member_id,
+            meal_date,
+            meal_time,
+            memo,
+            meal_photo_url
+        ) VALUES (
+             #{memberId},
+             #{request.mealDate},
+             #{request.mealTime},
+             #{request.memo},
+             #{request.mealPhotoUrl}
+        )
+    </insert>
+
+    <!--  식사에 해당하는 음식 등록  -->
+    <insert id="insertFoodItem" parameterType="map">
+        INSERT INTO food_item (meal_record_id, food_name, amount, nutrient_type, source_type)
+        VALUES
+            <foreach collection="foodItems" item="item" separator=",">
+                (#{mealRecordId}, #{item.foodName}, #{item.amount}, #{item.nutrientType}, #{item.sourceType})
+            </foreach>
+    </insert>
+
+
+    <resultMap id="mealRecordMap" type="MealRecordResponseDto">
+        <id property="mealRecordId" column="meal_record_id"/>
+        <result property="mealDate" column="meal_date"/>
+        <result property="mealTime" column="meal_time"/>
+        <result property="memo" column="memo"/>
+        <result property="mealPhotoUrl" column="meal_photo_url"/>
+
+        <collection property="foodItems" ofType="FoodItemQueryDto">
+            <result property="foodName" column="food_name"/>
+            <result property="amount" column="amount"/>
+            <result property="nutrientType" column="nutrient_type"/>
+            <result property="sourceType" column="source_type"/>
+        </collection>
+
+    </resultMap>
+
+    <!-- 사용자와 특정 날짜에 해당하는 식단 정보 모두 가져옴  -->
+    <select id="selectMealRecordsByMemberIdAndDate" resultMap="mealRecordMap">
+        SELECT
+            m.meal_record_id,
+            m.meal_date,
+            m.meal_time,
+            m.memo,
+            m.meal_photo_url,
+            f.food_name,
+            f.amount,
+            f.nutrient_type,
+            f.source_type
+        FROM
+            meal_record m
+        LEFT JOIN
+            food_item f
+        ON
+            m.meal_record_id = f.meal_record_id
+        WHERE
+            m.member_id = #{memberId}
+        AND
+            m.meal_date = #{today}
+    </select>
+</mapper>

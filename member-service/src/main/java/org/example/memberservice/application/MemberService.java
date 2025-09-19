@@ -10,4 +10,6 @@ public interface MemberService {
     MemberResponse findById(Long id);
 
     MemberResponse registerMember(MemberCreateRequest member);
+
+    boolean existsById(Long memberId);
 }

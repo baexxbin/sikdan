@@ -5,7 +5,7 @@ import org.example.common.dto.response.MemberResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "member-service", path = "/api/members")
+@FeignClient(name = "member-service", path = "/api/member")
 public interface MemberClient {
 
     @PostMapping("/register")
