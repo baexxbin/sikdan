@@ -1,11 +1,13 @@
 package org.example.commonsecurity.jwt;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.commonsecurity.auth.CustomUserDetailsFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -15,7 +17,10 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtTokenProvider jwtProvider;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    // 서비스별 CustomUserDetailsFactory (직접 구현)
+    private final CustomUserDetailsFactory customUserDetailsFactory;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -26,9 +31,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
 
         // 2. 토큰 유효성 검사
-        if (token != null && jwtProvider.validateToken(token)) {
-            // 3. 토큰 유효 시 인증 정보 생성 후 SecurityContext 저장
-            Authentication authentication = jwtProvider.getAuthentication(token);
+        if (token != null && jwtTokenProvider.validateToken(token)) {
+            Claims claims = jwtTokenProvider.getClaims(token);
+
+            // 팩토리를 통해 Authentication 생성 (서비스별 CustomUserDetails로 변환)
+            Authentication authentication = customUserDetailsFactory.createAuthentication(claims);
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             logger.debug("유효하지 않은 토큰이거나 없음");
