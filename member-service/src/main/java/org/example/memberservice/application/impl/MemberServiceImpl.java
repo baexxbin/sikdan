@@ -7,11 +7,13 @@ import org.example.memberservice.dto.request.MemberCreateRequest;
 import org.example.memberservice.model.vo.Member;
 import org.example.memberservice.persistence.MemberMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
@@ -50,6 +52,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public MemberResponse registerMember(MemberCreateRequest request) {
 
         Member member = request.toEntity();
