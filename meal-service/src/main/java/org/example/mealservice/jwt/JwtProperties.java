@@ -1,4 +1,4 @@
-package org.example.mealservice.config;
+package org.example.mealservice.jwt;
 
 
 import lombok.Getter;

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mealservice.domain.meal.application.MealService;
 import org.example.mealservice.domain.meal.dto.response.MealRecordResponseDto;
-import org.example.mealservice.security.CustomUserDetails;
+import org.example.commonsecurity.auth.CustomUserDetails;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;

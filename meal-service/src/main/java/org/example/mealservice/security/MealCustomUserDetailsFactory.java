@@ -2,6 +2,7 @@ package org.example.mealservice.security;
 
 
 import io.jsonwebtoken.Claims;
+import org.example.commonsecurity.auth.CustomUserDetails;
 import org.example.commonsecurity.auth.CustomUserDetailsFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

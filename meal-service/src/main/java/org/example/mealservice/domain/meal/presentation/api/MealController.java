@@ -3,7 +3,7 @@ package org.example.mealservice.domain.meal.presentation.api;
 import lombok.RequiredArgsConstructor;
 import org.example.mealservice.domain.meal.application.MealService;
 import org.example.mealservice.domain.meal.dto.request.MealRecordCreateRequestDto;
-import org.example.mealservice.security.CustomUserDetails;
+import org.example.commonsecurity.auth.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
