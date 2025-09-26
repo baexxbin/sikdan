@@ -3,14 +3,10 @@ package org.example.commonsecurity.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.security.Key;
 import java.util.Base64;
-import java.util.Date;
-import java.util.Map;
 
 // 순수 JWT 유틸성 클래스 (CustomUserDetails, Authentication은 모름)
 // 토큰 생성, 클레임 추출, 유효성 검사 담당
@@ -31,18 +27,6 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // 토큰 생성 (서비스에서 직접 claims를 전달)
-    public String generateToken(Map<String, Object> claims) {
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + expiration);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
 
     // 토큰에서 Claims 추출
     public Claims getClaims(String token) {
@@ -76,14 +60,4 @@ public class JwtTokenProvider {
         return getClaims(token).getSubject();
     }
 
-    // 요청 헤더에서 토큰 추출
-    public String resolveToken(HttpServletRequest req) {
-        String bearerToken = req.getHeader("Authorization");
-
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-
-        return null;
-    }
 }

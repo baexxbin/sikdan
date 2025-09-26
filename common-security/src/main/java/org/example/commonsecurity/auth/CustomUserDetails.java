@@ -1,4 +1,4 @@
-package org.example.mealservice.security;
+package org.example.commonsecurity.auth;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
