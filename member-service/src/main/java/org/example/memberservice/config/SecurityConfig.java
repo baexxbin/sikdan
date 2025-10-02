@@ -4,7 +4,9 @@ package org.example.memberservice.config;
 import lombok.RequiredArgsConstructor;
 import org.example.commonsecurity.jwt.JwtAuthenticationFilter;
 import org.example.commonsecurity.jwt.JwtTokenProvider;
+import org.example.commonsecurity.jwt.ServiceTokenProvider;
 import org.example.memberservice.jwt.JwtProperties;
+import org.example.memberservice.security.JwtServiceAuthenticationFilter;
 import org.example.memberservice.security.MemberCustomUserDetailsFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -37,8 +39,18 @@ public class SecurityConfig {
         return new JwtAuthenticationFilter(jwtTokenProvider, memberCustomUserDetailsFactory);
     }
 
+    // 내부 서비스 발급토큰 필터도 Bean 등록
     @Bean
-    public SecurityFilterChain memberSecurityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    public JwtServiceAuthenticationFilter jwtServiceAuthenticationFilter(ServiceTokenProvider serviceTokenProvider) {
+        return new JwtServiceAuthenticationFilter(serviceTokenProvider);
+    }
+
+    @Bean
+    public SecurityFilterChain memberSecurityFilterChain(
+            HttpSecurity http,
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            JwtServiceAuthenticationFilter jwtServiceAuthenticationFilter
+    ) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -47,6 +59,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/member/register", "/api/member/email/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                // 서비스 토큰 필터 먼저 → 사용자 토큰 필터 다음
+                .addFilterBefore(jwtServiceAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

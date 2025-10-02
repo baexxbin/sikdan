@@ -1,11 +1,16 @@
 package org.example.mealservice.infrastructure.client;
 
+import org.example.mealservice.config.FeignClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-@FeignClient(name = "member-service", path = "/api/member")
+@FeignClient(
+        name = "member-service",
+        path = "/api/member",
+        configuration = FeignClientConfig.class
+)
 public interface MemberServiceClient {
 
     @GetMapping("/{memberId}/exists")

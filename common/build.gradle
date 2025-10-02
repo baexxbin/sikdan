@@ -17,9 +17,14 @@ repositories {
 }
 
 dependencies {
+    // SLF4J (로깅 API)
+    implementation 'org.slf4j:slf4j-api:2.0.13'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    implementation 'io.github.openfeign:feign-core:12.5'
 
     // Jasypt
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
@@ -27,6 +32,11 @@ dependencies {
     // Test
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation 'org.springframework.security:spring-security-core:6.3.4'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {

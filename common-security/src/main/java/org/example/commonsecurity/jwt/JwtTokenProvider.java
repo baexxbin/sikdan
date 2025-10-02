@@ -8,6 +8,8 @@ import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Base64;
 
+// 사용자 토큰 (각 서비스에 토큰 검증 시 이용)
+
 // 순수 JWT 유틸성 클래스 (CustomUserDetails, Authentication은 모름)
 // 토큰 생성, 클레임 추출, 유효성 검사 담당
 public class JwtTokenProvider {

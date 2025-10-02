@@ -17,10 +17,16 @@ public class GatewayJwtFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
         // 로그인/회원가입은 토큰 검사하지 않고 바로 통과
         String path = exchange.getRequest().getPath().toString();
         if (path.startsWith("/api/auth/")) {
+            return chain.filter(exchange);
+        }
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // 헤더 없으면 그냥 통과(혹은 필요시 차단)
             return chain.filter(exchange);
         }
 
