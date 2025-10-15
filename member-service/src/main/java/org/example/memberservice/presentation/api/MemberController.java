@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.common.dto.response.MemberResponse;
 import org.example.memberservice.application.MemberService;
 import org.example.memberservice.dto.request.MemberCreateRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -37,8 +36,8 @@ public class MemberController {
 
     // memberId로 회원 조회 (meal-service에서 호출)
     @GetMapping("/{memberId}/exists")
-    public ResponseEntity<Boolean> existsId(@PathVariable Long memberId) {
+    public boolean existsId(@PathVariable Long memberId) {
         boolean isExists = memberService.existsById(memberId);
-        return ResponseEntity.ok(isExists);
+        return isExists;
     }
 }

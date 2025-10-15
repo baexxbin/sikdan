@@ -7,6 +7,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -17,39 +18,31 @@ public class GatewayJwtFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        // 외부에서 서비스 코드 조작 못하도록 제거
+        ServerHttpRequest request = exchange.getRequest();
+        ServerHttpRequest mutatedRequest = request.mutate()
+                .headers(httpHeaders -> {
+                    httpHeaders.remove("X-Service-Authorization"); // strip incoming
+                })
+                .build();
+        ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
 
-        // 로그인/회원가입은 토큰 검사하지 않고 바로 통과
-        String path = exchange.getRequest().getPath().toString();
-        if (path.startsWith("/api/auth/")) {
-            return chain.filter(exchange);
-        }
+        String authHeader = mutatedRequest.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             // 헤더 없으면 그냥 통과(혹은 필요시 차단)
-            return chain.filter(exchange);
+            return chain.filter(mutatedExchange);
         }
 
-        String token = extractToken(exchange);
+        String token = authHeader.substring(7);
 
-        if (token == null || !jwtTokenProvider.validateToken(token)) {
-            // 토큰이 없거나 잘못된 경우 → 401 응답
+        if (!jwtTokenProvider.validateToken(token)) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
+            return mutatedExchange.getResponse().setComplete();
         }
 
         // 유효하면 체인 계속 진행
-        return chain.filter(exchange);
-    }
-
-    private String extractToken(ServerWebExchange exchange) {
-        HttpHeaders headers = exchange.getRequest().getHeaders();
-        String bearerToken = headers.getFirst(HttpHeaders.AUTHORIZATION);
-
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
+        return chain.filter(mutatedExchange);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class FeignClientConfig {
             @Override
             public void apply(RequestTemplate template) {
                 String token = tokenProvider.generateServiceToken("meal-service");
-                template.header("Authorization", "Bearer " + token);
+                template.header("X-Service-Authorization", "Bearer " + token);      // fegin 요청시 서비스 토큰 헤더 추가
 
                 log.info("MealService 서비스 토큰 생성");
                 log.info("Generated service token: {}", token);

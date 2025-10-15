@@ -10,6 +10,8 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+// 서비스 토큰 발급/검증
+
 public class ServiceTokenProvider {
     private final SecretKey secretKey;
     private final long validityInMs;
@@ -25,6 +27,7 @@ public class ServiceTokenProvider {
 
         return Jwts.builder()
                 .setSubject("service:" + serviceName)
+                .claim("role", "ROLE_SERVICE")
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(secretKey, SignatureAlgorithm.HS256)

@@ -1,6 +1,5 @@
 package org.example.commonsecurity.jwt;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
+// 사용자 인증 필터
 
 @Slf4j
 @RequiredArgsConstructor

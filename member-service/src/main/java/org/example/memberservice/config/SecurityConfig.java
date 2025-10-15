@@ -6,7 +6,7 @@ import org.example.commonsecurity.jwt.JwtAuthenticationFilter;
 import org.example.commonsecurity.jwt.JwtTokenProvider;
 import org.example.commonsecurity.jwt.ServiceTokenProvider;
 import org.example.memberservice.jwt.JwtProperties;
-import org.example.memberservice.security.JwtServiceAuthenticationFilter;
+import org.example.commonsecurity.jwt.JwtServiceAuthenticationFilter;
 import org.example.memberservice.security.MemberCustomUserDetailsFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +25,7 @@ public class SecurityConfig {
 
     private final JwtProperties jwtProperties;
     private final MemberCustomUserDetailsFactory memberCustomUserDetailsFactory;
+    private final ServiceTokenProvider serviceTokenProvider;
 
     // JwtTokenProvider Bean 등록
     @Bean
@@ -41,7 +42,7 @@ public class SecurityConfig {
 
     // 내부 서비스 발급토큰 필터도 Bean 등록
     @Bean
-    public JwtServiceAuthenticationFilter jwtServiceAuthenticationFilter(ServiceTokenProvider serviceTokenProvider) {
+    public JwtServiceAuthenticationFilter jwtServiceAuthenticationFilter() {
         return new JwtServiceAuthenticationFilter(serviceTokenProvider);
     }
 
@@ -57,10 +58,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/member/register", "/api/member/email/**").permitAll()
+
+                        // 서비스 간 통신 허용
+                        .requestMatchers("/api/member/**").hasAnyAuthority("ROLE_USER", "ROLE_SERVICE")
+
+                        // 그 외 인증 필요
                         .anyRequest().authenticated()
                 )
-                // 서비스 토큰 필터 먼저 → 사용자 토큰 필터 다음
+                // 서비스 간 토큰 검증 필터 먼저 등록
                 .addFilterBefore(jwtServiceAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+                // 사용자 토큰 검증 필터 등록
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
