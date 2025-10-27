@@ -22,7 +22,7 @@ public class GatewayJwtFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpRequest mutatedRequest = request.mutate()
                 .headers(httpHeaders -> {
-                    httpHeaders.remove("X-Service-Authorization"); // strip incoming
+                    httpHeaders.remove("X-Service-Authorization");
                 })
                 .build();
         ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
