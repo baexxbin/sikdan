@@ -1,9 +1,15 @@
 package org.example.memberservice.presentation.api;
 
 import lombok.RequiredArgsConstructor;
+import org.example.common.dto.response.LoginMemberInfoResponse;
 import org.example.common.dto.response.MemberResponse;
+import org.example.commonsecurity.auth.CustomUserDetails;
 import org.example.memberservice.application.MemberService;
 import org.example.memberservice.dto.request.MemberCreateRequest;
+import org.example.memberservice.model.vo.Member;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -39,5 +45,18 @@ public class MemberController {
     public boolean existsId(@PathVariable Long memberId) {
         boolean isExists = memberService.existsById(memberId);
         return isExists;
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<LoginMemberInfoResponse> getCurrentMember(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        MemberResponse memberInfo = memberService.findById(userDetails.getMemberId());
+
+        LoginMemberInfoResponse response = new LoginMemberInfoResponse(memberInfo.memberName());
+
+        return ResponseEntity.ok(response);
     }
 }

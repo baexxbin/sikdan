@@ -5,10 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.mealservice.domain.meal.application.MealService;
 import org.example.mealservice.domain.meal.dto.request.MealRecordCreateRequestDto;
 import org.example.commonsecurity.auth.CustomUserDetails;
+import org.example.mealservice.domain.meal.dto.response.MealRecordResponseDto;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/meals")
@@ -35,5 +41,19 @@ public class MealController {
     ) {
         System.out.println("Authorization header in meal-service = " + authHeader);
         return ResponseEntity.ok("meal recorded");
+    }
+
+    @GetMapping("my-meal")
+    public ResponseEntity<?> getMyMeal(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        Long memberId = user.getMemberId();
+        LocalDate targetDate = (date != null) ? date : LocalDate.now();
+
+        List<MealRecordResponseDto> mealRecords = mealService.getMealRecordsByMemberIdAndDate(memberId, targetDate);
+
+        return ResponseEntity.ok(mealRecords != null ? mealRecords : Collections.emptyList());
     }
 }
