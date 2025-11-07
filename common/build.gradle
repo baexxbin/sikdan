@@ -35,8 +35,13 @@ dependencies {
 
     implementation 'org.springframework.security:spring-security-core:6.3.4'
 
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    // Spring Boot BOM(버전관리)
+    // spring-boot-starter-web처럼 무거운 servlet/tomcat 의존성 빼고 spring-web만 깔끔히 의존
+    implementation platform("org.springframework.boot:spring-boot-dependencies:3.5.5")
+
+    // Spring-web만 가져옴
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
 }
 
 tasks.named('test') {
