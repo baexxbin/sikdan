@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.example.mealservice.domain.food.model.vo.FoodItem;
 
+import java.util.List;
+
 @Mapper
 public interface FoodMapper {
 
@@ -12,4 +14,6 @@ public interface FoodMapper {
     void updateFoodItem(@Param("foodItem") FoodItem foodItem);
 
     boolean existsByIdAndMealId(@Param("foodItemId") Long foodItemId, @Param("mealRecordId") Long mealRecordId);
+
+    List<FoodItem> findFoodItemsByMealRecordId(Long mealRecordId);
 }

@@ -1,8 +1,15 @@
 package org.example.mealservice.domain.meal.application.impl;
 
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.example.common.exception.CustomException;
+import org.example.common.exception.ErrorCode;
+import org.example.mealservice.domain.food.persistence.FoodMapper;
 import org.example.mealservice.domain.meal.dto.request.MealRecordCreateRequestDto;
+import org.example.mealservice.domain.meal.dto.request.MealUpdateDto;
 import org.example.mealservice.domain.meal.dto.response.MealRecordResponseDto;
+import org.example.mealservice.domain.meal.model.MealTime;
+import org.example.mealservice.domain.meal.model.vo.MealRecord;
 import org.example.mealservice.domain.meal.persistence.MealMapper;
 import org.example.mealservice.domain.meal.application.MealService;
 import org.example.mealservice.infrastructure.client.MemberServiceClient;
@@ -12,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +52,79 @@ public class MealServiceImpl implements MealService {
         return mealRecordId;
     }
 
+    // 하루 식단들 가져오기
     @Override
     @Transactional(readOnly = true)
-    public List<MealRecordResponseDto> getMealRecordsByMemberIdAndDate(Long memberId, LocalDate date) {
-        return mealMapper.selectMealRecordsByMemberIdAndDate(memberId, date);
+    public List<MealRecordResponseDto> getDayMealRecords(Long memberId, LocalDate date) {
+        List<MealRecord> records = mealMapper.selectMealRecordsByMemberIdAndDate(memberId, date);
+        return records.stream()
+                .map(MealRecordResponseDto::from)
+                .collect(Collectors.toList());
     }
+
+    // 식단 ID 조회
+    @Override
+    @Transactional(readOnly = true)
+    public Long getMealId(Long memberId, LocalDate date, MealTime mealTime) {
+        Long mealRecordId = mealMapper.findMealId(memberId, date, mealTime);
+        if (mealRecordId == null) {
+            throw new NotFoundException("해당 날짜와 시간대의 식단이 존재하지 않습니다.");
+        }
+        return mealRecordId;
+    }
+
+    /*
+     *  식단 RUD
+     */
+
+    // 식단 상세조회
+    @Override
+    @Transactional(readOnly = true)
+    public MealRecordResponseDto getMealRecordById(Long memberId, Long mealRecordId) {
+        MealRecord meal = mealMapper.findMealRecordById(memberId, mealRecordId);
+        if (meal == null) {
+            throw new CustomException(ErrorCode.MEAL_NOT_FOUND);
+        }
+        meal.validateOwner(memberId);
+        return MealRecordResponseDto.from(meal);
+    }
+
+    // 식단 수정
+    @Override
+    @Transactional
+    public MealRecordResponseDto updateMealRecord(Long mealRecordId, Long memberId, MealUpdateDto request) {
+        MealRecord meal = mealMapper.findMealRecordById(memberId, mealRecordId);
+        if (meal == null) {
+            throw new CustomException(ErrorCode.MEAL_NOT_FOUND);
+        }
+        meal.validateOwner(memberId);
+
+        meal.update(request);
+
+        int affected = mealMapper.updateMeal(mealRecordId, memberId, request);
+        if (affected == 0) {
+            throw new CustomException(ErrorCode.MEAL_NOT_MODIFIED);
+        }
+
+        return MealRecordResponseDto.from(meal);
+    }
+
+    // 식단 삭제
+    @Override
+    public boolean deleteMealRecord(Long memberId, Long mealRecordId) {
+        MealRecord meal = mealMapper.findMealRecordById(memberId, mealRecordId);
+        if (meal == null) {
+            throw new CustomException(ErrorCode.MEAL_NOT_FOUND);
+        }
+        meal.validateOwner(memberId);
+        int deleted = mealMapper.deleteMeal(mealRecordId, memberId);
+        if (deleted == 0) {
+            throw new CustomException(ErrorCode.MEAL_NOT_DELETED);
+        }
+
+        return true;
+    }
+
 
     // MealRecordCreateRequestDto 전처리
     private void sanitizeRequestDto(MealRecordCreateRequestDto requestDto) {

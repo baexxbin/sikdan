@@ -5,6 +5,20 @@
 
 <mapper namespace="org.example.mealservice.domain.meal.persistence.MealMapper">
 
+    <!--  MealRecord 조회  -->
+    <select id="findById" parameterType="long" resultType="MealRecord">
+        SELECT
+            meal_record_id AS mealRecordId,
+            member_id AS memberId,
+            meal_date AS mealDate,
+            meal_time AS mealTime,
+            memo,
+            meal_photo_url AS mealPhotoUrl,
+            created_at AS createdAt
+        FROM meal_record
+        WHERE meal_record_id = #{mealRecordId}
+    </select>
+
     <!-- 식사 기록 등록  -->
     <insert id="insertMealRecord" parameterType="map" useGeneratedKeys="true" keyProperty="request.mealRecordId">
         INSERT INTO meal_record (
@@ -32,43 +46,98 @@
     </insert>
 
 
-    <resultMap id="mealRecordMap" type="MealRecordResponseDto">
+    <resultMap id="MealRecordMap" type="MealRecord">
         <id property="mealRecordId" column="meal_record_id"/>
+        <result property="memberId" column="member_id"/>
         <result property="mealDate" column="meal_date"/>
         <result property="mealTime" column="meal_time"/>
         <result property="memo" column="memo"/>
         <result property="mealPhotoUrl" column="meal_photo_url"/>
+        <result property="createdAt" column="created_at"/>
 
-        <collection property="foodItems" ofType="FoodItemQueryDto">
+        <collection property="foodItems" ofType="FoodItem">
+            <id property="foodItemId" column="food_item_id"/>
             <result property="foodName" column="food_name"/>
             <result property="amount" column="amount"/>
             <result property="nutrientType" column="nutrient_type"/>
             <result property="sourceType" column="source_type"/>
+            <result property="createdAt" column="food_created_at"/>
         </collection>
-
     </resultMap>
 
     <!-- 사용자와 특정 날짜에 해당하는 식단 정보 모두 가져옴  -->
-    <select id="selectMealRecordsByMemberIdAndDate" resultMap="mealRecordMap">
+    <select id="selectMealRecordsByMemberIdAndDate" resultMap="MealRecordMap">
         SELECT
             m.meal_record_id,
+            m.member_id,
             m.meal_date,
             m.meal_time,
             m.memo,
             m.meal_photo_url,
+            m.created_at AS created_at,
+            f.food_item_id,
             f.food_name,
             f.amount,
             f.nutrient_type,
-            f.source_type
-        FROM
-            meal_record m
-        LEFT JOIN
-            food_item f
-        ON
-            m.meal_record_id = f.meal_record_id
-        WHERE
-            m.member_id = #{memberId}
-        AND
-            m.meal_date = #{today}
+            f.source_type,
+            f.created_at AS food_created_at
+        FROM meal_record m
+                 LEFT JOIN food_item f
+                           ON m.meal_record_id = f.meal_record_id
+        WHERE m.member_id = #{memberId}
+          AND m.meal_date = #{today}
+        ORDER BY m.meal_time
     </select>
+
+    <!--  존재 여부 확인 (존재:1, 미존재:0)  -->
+    <select id="existsByIdAndMemberId" parameterType="map" resultType="boolean">
+        SELECT COUNT(1) > 0
+        FROM meal_record
+        WHERE member_id = #{memberId}
+        AND meal_record_id = #{mealRecordId}
+    </select>
+
+    <!--  식단id 조회  -->
+    <select id="findMealId" resultType="Long">
+        SELECT meal_record_id
+        FROM meal_record
+        WHERE member_id = #{memberId}
+          AND meal_date = #{mealDate}
+          AND meal_time = #{mealTime}
+    </select>
+
+<!--  식단 RUD  -->
+    <!--  식단 조회  -->
+    <select id="findMealRecordById" parameterType="map" resultType="MealRecord">
+        SELECT
+            mr.meal_record_id AS mealRecordId,
+            mr.member_id AS memberId,
+            mr.meal_date AS mealDate,
+            mr.meal_time AS mealTime,
+            mr.memo,
+            mr.meal_photo_url AS mealPhotoUrl,
+            mr.created_at AS createdAt
+        FROM meal_record mr
+        WHERE mr.meal_record_id = #{mealRecordId}
+          AND mr.member_id = #{memberId}
+    </select>
+
+    <!--  식단 수정  -->
+    <update id="updateMeal" parameterType="map">
+        UPDATE meal_record
+        SET
+            meal_date = #{mealUpdateDto.mealDate},
+            meal_time = #{mealUpdateDto.mealTime},
+            memo = #{mealUpdateDto.memo},
+            meal_photo_url = #{mealUpdateDto.mealPhotoUrl}
+        WHERE meal_record_id = #{mealRecordId}
+        AND member_id = #{memberId}
+    </update>
+    
+    <!--  식단 삭제  -->
+    <delete id="deleteMeal" parameterType="long">
+        DELETE FROM meal_record
+        WHERE meal_record_id = #{mealRecordId}
+            AND member_id = #{memberId}
+    </delete>
 </mapper>

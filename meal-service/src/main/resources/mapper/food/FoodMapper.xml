@@ -34,4 +34,18 @@
         WHERE food_item_id = #{foodItemId}
         AND meal_record_id = #{mealRecordId}
     </select>
+
+    <!--  식단ID로 음식 찾기  -->
+    <select id="findFoodItemsByMealRecordId" parameterType="long" resultType="FoodItem">
+        SELECT
+            food_item_id,
+            meal_record_id,
+            food_name,
+            amount,
+            nutrient_type,
+            source_type,
+            created_at
+        FROM food_item
+        WHERE meal_record_id = #{mealRecordId}
+    </select>
 </mapper>

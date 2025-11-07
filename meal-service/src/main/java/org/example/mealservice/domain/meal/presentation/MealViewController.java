@@ -31,7 +31,7 @@ public class MealViewController {
         // 기본값 오늘, 그 외 날짜 지정
         LocalDate targetDate = (date != null) ? date : LocalDate.now();
 
-        List<MealRecordResponseDto> mealRecords = mealService.getMealRecordsByMemberIdAndDate(memberId, targetDate);
+        List<MealRecordResponseDto> mealRecords = mealService.getDayMealRecords(memberId, targetDate);
 
         model.addAttribute("day", targetDate);
         model.addAttribute("mealRecords", mealRecords != null ? mealRecords : Collections.emptyList());
